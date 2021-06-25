@@ -1,3 +1,17 @@
+locals {
+  # enforce usage of eks_worker_ami_name_filter variable to set the right kubernetes version for EKS workers,
+  # otherwise the first version of Kubernetes supported by AWS (v1.11) for EKS workers will be used, but
+  # EKS control plane will use the version specified by kubernetes_version variable.
+  eks_worker_ami_name_filter = "amazon-eks-node-${var.kubernetes_version}*"
+}
+
+data "null_data_source" "wait_for_cluster_and_kubernetes_configmap" {
+  inputs = {
+    cluster_name             = module.eks_cluster.eks_cluster_id
+    kubernetes_config_map_id = module.eks_cluster.kubernetes_config_map_id
+  }
+}
+
 module "vpc" {
   source     = "git::git@github.com:Greg215/terraform-demo-vg.git//vpc?ref=main"
   cidr_block = "172.31.216.0/22"
