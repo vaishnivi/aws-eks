@@ -6,7 +6,7 @@
 terraform {
   backend "s3" {
     bucket = "terraform-state-devops-training-bucket"
-    key    = "ritz-eks/terraform.tfstate"
+    key    = "ritz-eks-new/terraform.tfstate"
     region = "ap-southeast-1"
   }
   required_version = ">= 0.12.0"
@@ -14,5 +14,4 @@ terraform {
 
 provider "aws" {
   region  = "ap-southeast-1"
-  version = "~> 2.70"
 }
