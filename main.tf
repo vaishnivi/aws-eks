@@ -22,15 +22,25 @@ module "subnets" {
 }
 
 module "network_loadbalancer" {
-  source                = "git::git@github.com:Greg215/terraform-demo-vg.git//nlb?ref=main"
-  name                  = "ritz-nlb-eks"
-  aws_region            = "ap-southeast-1"
-  vpc_id                = module.vpc.vpc_id
-  vpc_public_subnet_ids = module.subnets.public_subnet_ids
+  source                         = "git::git@github.com:Greg215/terraform-demo-vg.git//nlb?ref=main"
+  name                           = "ritz-nlb-eks"
+  aws_region                     = "ap-southeast-1"
+  vpc_id                         = module.vpc.vpc_id
+  vpc_public_subnet_ids          = module.subnets.public_subnet_ids
+  aws-load-balancer-ssl-cert-arn = "arn:aws:acm:ap-southeast-1:545573948854:certificate/9e9ef1d3-1913-419f-9a9d-72e4c96acfc4"
   listeners = [
     {
       port     = 80
       protocol = "TCP",
+      target_groups = {
+        port              = 30080
+        proxy_protocol    = false
+        health_check_port = "traffic-port"
+      }
+    },
+    {
+      port     = 443
+      protocol = "TLS",
       target_groups = {
         port              = 30080
         proxy_protocol    = false
