@@ -32,6 +32,12 @@ podTemplate(label: label, containers: [
             stage('terraform plan') {
                 sh 'terraform plan -out=tfplan -input=false'
             }
+            stage('terraform apply') {
+                sh 'terraform apply -input=false tfplan'
+            }
+            stage('Notify') {
+                slackSend channel: "${notify_channel}", color: "warning", message: "ritz-EKS cluster is ready. (<$BUILD_URL|see details>)"
+            }
       }
     }
 
