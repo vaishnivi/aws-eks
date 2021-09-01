@@ -4,9 +4,13 @@ env.terraform_version = "0.12.31"
 def label = "jenkins-vg-agent"
 def notify_channel = '#jenkins-notify'
 
+properties([parameters([
+        choice(choices: ["create", "remove"].join("\n"), description: "Create or remove cluster", name: "terraform_action")
+])])
+
 podTemplate(label: label, containers: [
         containerTemplate(name: 'jenkins-agent',
-                image: "hashicorp/terraform:${env.terraform_version}",
+                image: "greghu/terraform-0.12.31:latest",
                 ttyEnabled: true,
                 command: 'cat')
 ]) {
@@ -33,10 +37,21 @@ podTemplate(label: label, containers: [
                 sh 'terraform plan -out=tfplan -input=false'
             }
             stage('terraform apply') {
-                sh 'terraform apply -input=false tfplan'
+                if (env.terraform_action == "create") {
+                    sh 'terraform apply -input=false tfplan'
+                } else {
+                    echo "Skip Apply due to not match."
+                }
+            }
+            stage('terraform destroy') {
+                if (env.terraform_action == "create") {
+                    sh 'terraform destroy -auto-approve'
+                } else {
+                    echo "Skip Apply due to not match."
+                }
             }
             stage('Notify') {
-                slackSend channel: "${notify_channel}", color: "warning", message: "ritz-EKS cluster is ready. (<$BUILD_URL|see details>)"
+                slackSend channel: "${notify_channel}", color: "good", message: "ritz-EKS cluster is ready. (<$BUILD_URL|see details>)"
             }
       }
     }
