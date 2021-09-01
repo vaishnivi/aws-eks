@@ -14,5 +14,26 @@ podTemplate(label: label, containers: [
     stage('Notify') {
                 slackSend channel: "${notify_channel}", color: "warning", message: "ritz-EKS cluster updating. (<$BUILD_URL|see details>)"
             }
+
+    withAWS(credentials: 'ritz-aws-credentials', region: 'ap-southeast-1') {
+        container('jenkins-agent') {
+            stage('Checkout') {
+                checkout scm
+                }
+            stage('terraform init') {
+                sh 'terraform init -input=false'
+            }
+            stage('terraform validate') {
+                sh 'terraform validate'
+            }
+            stage('terraform fmt') {
+                sh 'terraform fmt'
+            }
+            stage('terraform plan') {
+                sh 'terraform plan -out=tfplan -input=false'
+            }
+      }
+    }
+
   }
 }
