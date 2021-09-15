@@ -100,9 +100,6 @@ workflows:
       - terraform_apply:
           requires:
               - terraform_init
-      filters:
-        branches:
-          only: master
       - slack_notify_action:
           terraform_action: create
           requires:
