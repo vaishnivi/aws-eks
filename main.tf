@@ -9,8 +9,8 @@ locals {
 
 module "vpc" {
   source     = "github.com/Greg215/terraform-aws-eks//vpc?ref=main"
-  cidr_block = "172.31.216.0/22"
-  name       = "test-vpc"
+  cidr_block = "10.74.128.0/23"
+  name       = "vaish-vpc"
 }
 
 module "subnets" {
@@ -18,12 +18,12 @@ module "subnets" {
   vpc_id              = module.vpc.vpc_id
   igw_id              = module.vpc.igw_id
   nat_gateway_enabled = false
-  name                = "test-subnets"
+  name                = "vaish-subnets"
 }
 
 module "network_loadbalancer" {
   source                         = "github.com/Greg215/terraform-aws-eks//nlb?ref=main"
-  name                           = "ritz-nlb-eks"
+  name                           = "vaish-nlb-eks"
   aws_region                     = "ap-southeast-1"
   vpc_id                         = module.vpc.vpc_id
   vpc_public_subnet_ids          = module.subnets.public_subnet_ids
@@ -60,7 +60,7 @@ module "network_loadbalancer" {
 
 module "eks_cluster" {
   source                     = "github.com/Greg215/terraform-aws-eks//eks-cluster?ref=main"
-  name                       = "ritz-eks-cluster"
+  name                       = "vaish-eks-cluster"
   vpc_id                     = module.vpc.vpc_id
   subnet_ids                 = module.subnets.public_subnet_ids
   kubernetes_version         = var.kubernetes_version
@@ -96,22 +96,22 @@ module "route53" {
   type    = "CNAME"
   records = [
     {
-      NAME   = "ritz.training.visiontech.com.sg"
+      NAME   = "vaish.training.visiontech.com.sg"
       RECORD = module.network_loadbalancer.dns_name
       TTL    = "300"
     },
     {
-      NAME   = "hazelcast-ritz.training.visiontech.com.sg"
+      NAME   = "hazelcast-vaish.training.visiontech.com.sg"
       RECORD = module.network_loadbalancer.dns_name
       TTL    = "300"
     },
     {
-      NAME   = "dashboard-ritz.training.visiontech.com.sg"
+      NAME   = "dashboard-vaish.training.visiontech.com.sg"
       RECORD = module.network_loadbalancer.dns_name
       TTL    = "300"
     },
-{
-        NAME = "jenkins-ritz.training.visiontech.com.sg"
+   { 
+        NAME = "jenkins-vaish.training.visiontech.com.sg"
         RECORD = module.network_loadbalancer.dns_name
         TTL = "300"
     }
