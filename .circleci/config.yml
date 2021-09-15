@@ -58,36 +58,36 @@ jobs:
       - terraform/apply:
           path: .
 
-slack_notify_action:
-  machine:
-    image: ubuntu-1604:202007-01
-  parameters:
-    terraform_action:
-      description: |
-        If to create to remove the cluster
-      type: string
-  steps:
-    - slack/notify:
-        custom: |
-          {
-            "blocks": [
-              {
-                "type": "section",
-                "fields": [
-                  {
-                    "type": "plain_text",
-                    "text": "<< parameters.terraform_action >> the EKS cluster via terraform by $CIRCLE_USERNAME has been done",
-                    "emoji": true
-                  }
-                ]
-              },
-              {
-                "type": "divider"
-              }
-            ]
-          }
-        event: always
-        channel: circleci-notification
+  slack_notify_action:
+    machine:
+      image: ubuntu-1604:202007-01
+    parameters:
+      terraform_action:
+        description: |
+          If to create to remove the cluster
+        type: string
+    steps:
+      - slack/notify:
+          custom: |
+            {
+              "blocks": [
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "plain_text",
+                      "text": "<< parameters.terraform_action >> the EKS cluster via terraform by $CIRCLE_USERNAME has been done",
+                      "emoji": true
+                    }
+                  ]
+                },
+                {
+                  "type": "divider"
+                }
+              ]
+            }
+          event: always
+          channel: circleci-notification
 
 workflows:
   terraform_create_eks_cluster:
