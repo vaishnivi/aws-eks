@@ -32,7 +32,7 @@ jobs:
   terraform_init:
    docker:
       - image: hashicorp/terraform:1.0.5
-    steps:
+   steps:
       - checkout
       - terraform/init:
          path: .
