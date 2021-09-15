@@ -28,6 +28,8 @@ jobs:
             }
           event: always
           channel: circleci-notification
+
 workflows:
+    terraform_create_eks_cluster:
     jobs:
       - slack_notify
