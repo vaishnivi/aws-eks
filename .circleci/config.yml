@@ -105,5 +105,5 @@ workflows:
                   only: master
       - slack_notify_action:
           terraform_action: create
-             requires:
+            requires:
                 - terraform_apply
